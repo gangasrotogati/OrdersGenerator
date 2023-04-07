@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Website</title>
+  <title>CD Orders Generator</title>
   <script>
 
     function generateOrderData(numSales) {
@@ -112,17 +112,12 @@ function createOneOrder(){
 
 function submitOneOrder(){
     salesData = generateOrderData(1);
-    //newOrder = new Order(salesData[0].StoreID, salesData[0].SalesPersonID, salesData[0].CdID, salesData[0].PricePaid, salesData[0].Date);
     submitOrder(salesData);
     displayOrderData(salesData);
 }
 
 function submitFiveHundred(){
     salesData = generateOrderData(500);
-    /*salesData.forEach(element => {
-        newOrder = new Order(element.StoreID, element.SalesPersonID, element.CdID, element.PricePaid, element.Date);
-        submitOrder(newOrder);
-    });*/
     submitOrder(salesData);
     displayOrderData(salesData);
 }
