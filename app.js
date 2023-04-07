@@ -1,13 +1,22 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const fs = require('fs');
 const path = require('path');
 
 app.use(bodyParser.json());
 
 app.post('/orders', (req, res) => {
   console.log(req.body);
-  res.send('Order received successfully');
+
+  fs.writeFile('orders.json', JSON.stringify(req.body), (err) => {
+      if (err) {
+          console.error(err);
+          res.status(500).send('Error writing orders file');
+      } else {
+          res.send('Order received and saved successfully');
+      }
+  });
 });
 
 app.get('/', (req, res) => {
