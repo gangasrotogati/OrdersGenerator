@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Website</title>
+  <script>
+
+    function generateOrderData(numSales) {
+    const stores = ['98053', '98007', '98077', '98055', '98011', '98046'];
+    const salespeople = ['John', 'Jane', 'Bob', 'Alice'];
+    const cds = ['CD A', 'CD B', 'CD C', 'CD D'];
+    const minPrice = 5;
+    const maxPrice = 15;
+    const minDate = new Date(2022, 0, 1);
+    const maxDate = new Date();
+    
+    const salesData = [];
+    
+    for (let i = 0; i < numSales; i++) {
+      const storeID = Math.floor(Math.random() * stores.length) + 1;
+      const salesPersonID = (Math.floor(Math.random() * 4) + 1) + (4*storeID - 4);
+      const cdID = Math.floor(Math.random() * cds.length) + 1;
+      const pricePaid = Math.floor(Math.random() * (maxPrice - minPrice + 1)) + minPrice;
+      const date = new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()));
+      
+      salesData.push({
+        StoreID: storeID,
+        SalesPersonID: salesPersonID,
+        CdID: cdID,
+        PricePaid: pricePaid,
+        Date: date
+      });
+    }
+    
+    return salesData;
+  }
+
+  function displayOrderData(salesData) {
+
+    const table = document.createElement('table');
+    
+    // Create the table header
+    const headerRow = document.createElement('tr');
+    const headers = ['Store ID', 'Sales Person ID', 'CD ID', 'Price Paid', 'Date'];
+    for (let header of headers) {
+      const th = document.createElement('th');
+      th.textContent = header;
+      headerRow.appendChild(th);
+    }
+    table.appendChild(headerRow);
+    
+    // Create a table row for each sales data object
+    for (let data of salesData) {
+      const row = document.createElement('tr');
+      const td1 = document.createElement('td');
+      td1.textContent = data.StoreID;
+      row.appendChild(td1);
+      const td2 = document.createElement('td');
+      td2.textContent = data.SalesPersonID;
+      row.appendChild(td2);
+      const td3 = document.createElement('td');
+      td3.textContent = data.CdID;
+      row.appendChild(td3);
+      const td4 = document.createElement('td');
+      td4.textContent = `$${data.PricePaid.toFixed(2)}`;
+      row.appendChild(td4);
+      const td5 = document.createElement('td');
+      td5.textContent = data.Date.toLocaleDateString();
+      row.appendChild(td5);
+      table.appendChild(row);
+    }
+
+  const container = document.getElementById('salesDataContainer');
+  container.innerHTML = '';
+  container.appendChild(table);
+}
+
+function Order(storeID, salesPersonID, cdID, pricePaid, date) {
+  this.StoreID = storeID;
+  this.SalesPersonID = salesPersonID;
+  this.CdID = cdID;
+  this.PricePaid = pricePaid;
+  this.Date = date;
+}
+
+function submitOrder(order) {
+  // Define the URL of the Node.js server
+  const url = 'http://localhost:3000/orders';
+  
+  // Use Fetch to submit the order data as a JSON payload
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(order)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    console.log('Order submitted successfully');
+  })
+  .catch(error => {
+    console.error('Error submitting order:', error);
+  });
+}
+
+function createOneOrder(){
+    salesData = generateOrderData(1);
+    displayOrderData(salesData);
+}
+
+function submitOneOrder(){
+    salesData = generateOrderData(1);
+    newOrder = new Order(salesData[0].StoreID, salesData[0].SalesPersonID, salesData[0].CdID, salesData[0].PricePaid, salesData[0].Date);
+    submitOrder(newOrder);
+    displayOrderData(salesData);
+}
+
+function submitFiveHundred(){
+    salesData = generateOrderData(500);
+    salesData.forEach(element => {
+        newOrder = new Order(element.StoreID, element.SalesPersonID, element.CdID, element.PricePaid, element.Date);
+        submitOrder(newOrder);
+    });
+    displayOrderData(salesData);
+}
+  </script>
+</head>
+<body>
+  <h1>CD ORDERS GENERATOR</h1>
+  <p>By Joe Glass, 04-06-2023, ISIT 420</p>
+  <input type="button" name="createButton" value="CREATE" onclick="createOneOrder()">
+  <input type="button" name="submitOneButton" value="SUBMIT-ONE" onclick="submitOneOrder()">
+  <input type="button" name="submitFiveHundredButton" value="SUBMIT-500" onclick="submitFiveHundred()">
+  <div id="salesDataContainer"></div>
+</body>
+</html>
